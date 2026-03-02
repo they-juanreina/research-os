@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+
+# Node (for Playwright projects)
+node_modules/
+dist/
+
+# Temp files
+*.tmp
+*.log
