@@ -23,18 +23,18 @@ Every skill in this library depends on two shared files:
 
 | Skill | Purpose | Phase |
 |-------|---------|-------|
-| [discussion-guide](discussion-guide/SKILL.md) | Generate teleprompter-ready facilitator scripts | Plan |
-| [session-note-taking](session-note-taking/SKILL.md) | Structured observation during moderated sessions | Collect |
-| [issue-log](issue-log/SKILL.md) | Track and categorize usability/research issues | Collect |
-| [thematic-coding](thematic-coding/SKILL.md) | Transform raw session data into a validated codebook and coded evidence dataset | Synthesize |
-| [journey-mapping](journey-mapping/SKILL.md) | Synthesize qualitative data into experience maps | Synthesize |
-| [hmw-extraction](hmw-extraction/SKILL.md) | Transform pain points into opportunity statements | Synthesize |
-| [saturation-analysis](saturation-analysis/SKILL.md) | Determine when research reaches thematic saturation | Evaluate |
-| [success-criteria-tracking](success-criteria-tracking/SKILL.md) | Map objectives to indicators and track go/no-go | Evaluate |
-| [querying-research-knowledge](querying-research-knowledge/SKILL.md) | Answer questions from the research corpus with evidence and confidence ratings | Query |
-| [planting-research-seeds](planting-research-seeds/SKILL.md) | Create a new research seed with metadata, starter plan, and phase folders | Plant |
-| [heuristic-eval](heuristic-eval/SKILL.md) | Run expert UX reviews; every evaluation produces designer action briefs and research seed briefs | Evaluate |
-| [synthesis-reporting](synthesis-reporting/SKILL.md) | Package synthesis findings into a confidence-rated, evidence-grounded stakeholder report | Report |
+| [discussion-guide](skills/discussion-guide/SKILL.md) | Generate teleprompter-ready facilitator scripts | Plan |
+| [session-note-taking](skills/session-note-taking/SKILL.md) | Structured observation during moderated sessions | Collect |
+| [issue-log](skills/issue-log/SKILL.md) | Track and categorize usability/research issues | Collect |
+| [thematic-coding](skills/thematic-coding/SKILL.md) | Transform raw session data into a validated codebook and coded evidence dataset | Synthesize |
+| [journey-mapping](skills/journey-mapping/SKILL.md) | Synthesize qualitative data into experience maps | Synthesize |
+| [hmw-extraction](skills/hmw-extraction/SKILL.md) | Transform pain points into opportunity statements | Synthesize |
+| [saturation-analysis](skills/saturation-analysis/SKILL.md) | Determine when research reaches thematic saturation | Evaluate |
+| [success-criteria-tracking](skills/success-criteria-tracking/SKILL.md) | Map objectives to indicators and track go/no-go | Evaluate |
+| [querying-research-knowledge](skills/querying-research-knowledge/SKILL.md) | Answer questions from the research corpus with evidence and confidence ratings | Query |
+| [planting-research-seeds](skills/planting-research-seeds/SKILL.md) | Create a new research seed with metadata, starter plan, and phase folders | Plant |
+| [heuristic-eval](skills/heuristic-eval/SKILL.md) | Run expert UX reviews; every evaluation produces designer action briefs and research seed briefs | Evaluate |
+| [synthesis-reporting](skills/synthesis-reporting/SKILL.md) | Package synthesis findings into a confidence-rated, evidence-grounded stakeholder report | Report |
 
 ---
 
