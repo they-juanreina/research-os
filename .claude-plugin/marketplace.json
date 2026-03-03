@@ -1,0 +1,21 @@
+{
+  "name": "research-os",
+  "owner": {
+    "name": "Juan Reina"
+  },
+  "metadata": {
+    "description": "Research OS Skills Library — 12 composable skills for human-led UX research operations"
+  },
+  "plugins": [
+    {
+      "name": "research-os",
+      "source": "./",
+      "description": "12 composable research skills: discussion guides, session notes, thematic coding, journey mapping, HMW extraction, saturation analysis, success criteria, heuristic eval, synthesis reporting, and more.",
+      "version": "1.0.0",
+      "author": { "name": "Juan Reina" },
+      "license": "MIT",
+      "keywords": ["research", "ux", "user-research", "qualitative", "synthesis"],
+      "category": "productivity"
+    }
+  ]
+}
