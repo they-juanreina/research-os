@@ -2,7 +2,7 @@
 name: discussion-guide
 description: "Generates a teleprompter-ready facilitator script for moderated research sessions. Use when planning a usability test, discovery interview, concept validation, or expert interview. Produces a fully scripted guide with timestamped parts, rationale, topic tracker, facilitator speech, stage directions, probes, and transition prompts. Triggers: discussion guide, moderator guide, facilitator script, interview guide, usability script, session script, interview protocol."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-02-28
 ---
 

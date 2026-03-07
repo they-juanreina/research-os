@@ -3,7 +3,7 @@ name: heuristic-eval
 description: >
   Phase 3 — Heuristic Synthesis. Synthesizes automated and visual findings into a severity-rated
   evaluation report with plural interpretations. Use after evidence collection is complete.
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 metadata:
   author: "Juan Reina (they/them)"
   phase: "03-synthesis"

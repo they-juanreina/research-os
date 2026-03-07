@@ -4,7 +4,7 @@ description: >
   Phase 2 — Evidence Collection. Translates the discovery brief into Playwright test scripts
   that capture screenshots, accessibility scans, and structured heuristic findings. Use after
   completing Phase 1 or when a discovery brief already exists.
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 metadata:
   author: "Juan Reina (they/them)"
   phase: "02-evidence"

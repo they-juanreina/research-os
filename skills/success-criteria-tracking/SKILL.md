@@ -2,7 +2,7 @@
 name: success-criteria-tracking
 description: "Tracks research success criteria against session outcomes. Use when evaluating whether research objectives are being met, computing pass/fail metrics per criterion, and generating go/no-go recommendations. Maps research plan criteria to measurable indicators and tracks progress per session. Triggers: success criteria, research objectives, pass fail, go no-go, criteria tracking, research success, acceptance criteria, metrics tracking."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-02-28
 ---
 

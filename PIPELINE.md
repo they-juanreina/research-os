@@ -1,7 +1,7 @@
 ---
 scope: all-skills
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 ---
 
 # Skills Pipeline — Composability Model

@@ -2,7 +2,7 @@
 name: session-note-taking
 description: "Generates structured session notes from moderated research sessions. Use when processing interview transcripts, usability test recordings, or live observation data into standardized note documents. Triggers: session notes, interview notes, observation notes, research session, moderated session, usability session, note-taking template."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-02-28
 ---
 

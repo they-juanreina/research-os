@@ -2,7 +2,7 @@
 name: saturation-analysis
 description: "Analyzes whether qualitative research has reached thematic saturation. Use when determining if additional research sessions are needed or if diminishing returns have been reached. Tracks new-theme emergence per session, computes saturation metrics, and recommends continue/pause/conclude. Triggers: saturation, enough sessions, diminishing returns, theme tracking, research completeness, stop collecting data, sufficient data."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-02-28
 ---
 

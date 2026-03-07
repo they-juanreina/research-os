@@ -2,7 +2,7 @@
 name: querying-research-knowledge
 description: "Answers questions about users, workflows, design decisions, and the platform by querying completed research seeds. Returns evidence-grounded summaries with confidence ratings and verbatim citations. Never extrapolates beyond available data. Flags embedded assumptions in the question itself. When a question has no research backing, generates a seed brief for future study instead of guessing. Use when asking what research shows, what users said, what we know about user behavior, pain points, mental models, platform use, or design rationale."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-02-28
 ---
 
@@ -173,8 +173,32 @@ Before delivering any answer:
 
 ---
 
+## Agent Team (Recommended for Complex Queries)
+
+For questions requiring search across multiple seeds, an agent team can execute the workflow in parallel for significantly faster results. The team splits Steps 2–5 across specialized agents:
+
+| Agent | What it handles | Equivalent SKILL.md steps |
+|-------|----------------|--------------------------|
+| Orchestrator | Question decoding, dispatching, coordination | Steps 1, 6 (routing) |
+| Corpus Searcher (×N) | Searches one seed in parallel with others | Step 2 |
+| Evidence Assessor | Classification, confidence, anti-bias checks | Steps 3, 4 |
+| Answer Composer | Final structured answer or seed brief | Steps 5, 6 |
+
+**When to use the agent team**: Multi-seed questions, broad queries, any question where sequential searching would be slow.
+
+**When single-agent is fine**: Targeted questions about a specific seed, or quick factual lookups.
+
+Agent team prompts: `agents/TEAM.md` (start here), then `agents/orchestrator.md`, `agents/corpus-searcher.md`, `agents/evidence-assessor.md`, `agents/answer-composer.md`.
+
+---
+
 ## References
 
 - `CORE.md` — epistemic framework (load with every invocation)
 - `PIPELINE.md` — research lifecycle and seed structure context
 - `Seeds/` — the research corpus (navigate directly; do not assume contents)
+- `agents/TEAM.md` — agent team overview and orchestration model
+- `agents/orchestrator.md` — orchestrator agent prompt
+- `agents/corpus-searcher.md` — corpus searcher agent prompt
+- `agents/evidence-assessor.md` — evidence assessor agent prompt
+- `agents/answer-composer.md` — answer composer agent prompt

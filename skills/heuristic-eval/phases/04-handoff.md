@@ -4,7 +4,7 @@ description: >
   Phase 4 — Designer Actions & Research Initiatives. Converts evaluation findings into
   designer action briefs, issue log entries, HMW statements, and research seed briefs.
   Use after the evaluation report is complete.
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 metadata:
   author: "Juan Reina (they/them)"
   phase: "04-handoff"

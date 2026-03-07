@@ -2,7 +2,7 @@
 name: journey-mapping
 description: "Synthesizes qualitative research data into structured journey maps. Use when creating experience maps from session transcripts, interview notes, or observation data. Produces stage-by-stage maps with touchpoints, emotions, pain points, and opportunities per user type. Triggers: journey map, experience map, user journey, customer journey, touchpoint mapping, service blueprint."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-01
 ---
 

@@ -2,7 +2,7 @@
 name: issue-log
 description: "Creates structured issue logs from research session data. Use when cataloging usability issues, design friction, or behavioral blockers observed during research sessions. Assigns unique IDs, severity levels, affected roles, and design fix directions. Triggers: issue log, usability issues, bug log, friction log, issue tracking, severity classification, issue inventory."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-02
 ---
 

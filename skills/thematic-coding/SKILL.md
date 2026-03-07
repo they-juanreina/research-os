@@ -2,7 +2,7 @@
 name: thematic-coding
 description: "Transforms raw session data into a validated codebook and coded evidence dataset. Use after session notes are complete and before journey mapping, HMW extraction, or saturation analysis. Converts observations, quotes, and pain points from multiple sessions into named, defined themes with inclusion/exclusion criteria, evidence counts, and cross-participant coverage. Triggers: affinity map, affinity mapping, thematic coding, code the data, theme extraction, cluster observations, analyze transcripts, synthesize sessions, group findings, open coding, axial coding, what themes emerged, identify patterns."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-02
 ---
 
