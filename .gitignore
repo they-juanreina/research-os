@@ -23,3 +23,6 @@ dist/
 # Temp files
 *.tmp
 *.log
+
+# Claude Code worktrees (local only)
+worktrees/

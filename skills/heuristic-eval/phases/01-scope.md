@@ -4,7 +4,7 @@ description: >
   Phase 1 — Scope & Discovery. Researches the product, defines users, maps user journeys,
   and generates heuristic hypotheses to produce a discovery brief. Use as the entry point
   for a new heuristic evaluation.
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 metadata:
   author: "Juan Reina (they/them)"
   phase: "01-scope"

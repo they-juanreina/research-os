@@ -20,7 +20,7 @@ description: >
   - Synthesizing automated + visual findings into a professional report (Phase 3)
   - Converting findings into design actions and research seeds (Phase 4)
   - Re-evaluating a product after fixes to measure improvement (Phase 2 → 4)
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 metadata:
   version: "1.0"
   last_updated: 2026-03-01

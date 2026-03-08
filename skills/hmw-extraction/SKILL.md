@@ -2,7 +2,7 @@
 name: hmw-extraction
 description: "Transforms research pain points and findings into prioritized How Might We opportunity statements. Use when converting qualitative research insights, usability findings, or user complaints into actionable design challenges. Produces clustered, evidence-grounded HMW statements with priority scores. Triggers: how might we, HMW, opportunity statements, design opportunities, reframe pain points, ideation input."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-02
 ---
 

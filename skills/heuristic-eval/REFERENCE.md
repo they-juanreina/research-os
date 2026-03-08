@@ -4,7 +4,7 @@ description: >
   Deep methodology, epistemic considerations, and downstream integration guidance
   for the heuristic-eval skill. Load when encountering edge cases, calibrating severity,
   or integrating findings into the Research OS pipeline.
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 metadata:
   author: "Juan Reina (they/them)"
   document_type: reference

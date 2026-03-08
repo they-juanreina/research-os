@@ -2,7 +2,7 @@
 name: planting-research-seeds
 description: "Creates a new research seed in the Seeds directory. Use when a question or opportunity needs to be formally tracked as a research initiative. Generates seed.md with full metadata, a pre-filled starter research plan, and the standard phase subfolder structure. Triggers: plant a seed, new seed, create seed, new research question, track research opportunity, we should research, open a new experiment, research opportunity identified, I have a question about users."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-02-28
 ---
 

@@ -1,7 +1,7 @@
 ---
 scope: all-skills
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 epistemic_model: plural
 care_requirement: mandatory
 categorical_policy: binaries_must_be_justified

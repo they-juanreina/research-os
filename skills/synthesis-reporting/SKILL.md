@@ -2,7 +2,7 @@
 name: synthesis-reporting
 description: "Packages synthesis outputs into a structured research report for stakeholders who need findings without raw data. Use after thematic coding, journey mapping, and HMW extraction are complete. Produces a confidence-rated, evidence-grounded narrative report with executive summary, theme findings, opportunities, and honest limitations. Triggers: research report, synthesis report, findings presentation, stakeholder summary, write up the research, report the findings, research deliverable, share findings."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-02
 ---
 
