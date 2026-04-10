@@ -69,21 +69,21 @@ Key minimum fields:
 
 ## Invocation
 
-Primary command for Lineage:
+Primary command (adapt the seed name and script path to your project):
 
 ```bash
-".venv/bin/python" "Seeds/Lineage/02_Sessions/Output/normalize_lineage_sessions.py"
+".venv/bin/python" "Seeds/[YourSeed]/02_Sessions/Output/normalize_sessions.py"
 ```
 
 Optional path overrides:
 
 ```bash
-".venv/bin/python" "Seeds/Lineage/02_Sessions/Output/normalize_lineage_sessions.py" \
-  --transcripts-dir "Seeds/Lineage/02_Sessions/Transcripts" \
-  --schema-dir "Seeds/Lineage/02_Sessions/Output/schemas" \
-  --template "Seeds/Lineage/01_Plan/Interview_Notes_Template_Jinja2.md" \
-  --out-dir "Seeds/Lineage/02_Sessions/Output/normalized" \
-  --notes-out "Seeds/Lineage/02_Sessions/Output/notes"
+".venv/bin/python" "Seeds/[YourSeed]/02_Sessions/Output/normalize_sessions.py" \
+  --transcripts-dir "Seeds/[YourSeed]/02_Sessions/Transcripts" \
+  --schema-dir "Seeds/[YourSeed]/02_Sessions/Output/schemas" \
+  --template "Seeds/[YourSeed]/01_Plan/Interview_Notes_Template_Jinja2.md" \
+  --out-dir "Seeds/[YourSeed]/02_Sessions/Output/normalized" \
+  --notes-out "Seeds/[YourSeed]/02_Sessions/Output/notes"
 ```
 
 ---
@@ -105,4 +105,4 @@ Optional path overrides:
 - `REFERENCE.md` - parsing assumptions, edge cases, and failure handling
 - `TEMPLATE.md` - normalized output contract and notes rendering contract
 - `EXAMPLES.md` - end-to-end run examples and expected outputs
-- `Seeds/Lineage/02_Sessions/Output/normalize_lineage_sessions.py` - ingestion utility used by this skill
+- `Seeds/[YourSeed]/02_Sessions/Output/normalize_sessions.py` - ingestion utility used by this skill (one per seed)

@@ -60,10 +60,10 @@ Components that represent a **domain entity** (not a generic button or chip) mus
 
 1. **Read the component source** — `.tsx` file, understand render logic and conditional branches.
 2. **Read the types** — `.types.ts` file, extract all props, enums, and interfaces.
-3. **Identify the entity** — What domain concept does this component represent? (e.g., AI Use Case, Dataset, Model, Issue).
+3. **Identify the entity** — What domain concept does this component represent? (e.g., Record, Asset, Model, Issue, Event).
 4. **Check for existing docs** — Does an `.mdx` or `.stories.tsx` already exist? If so, this is an update, not a creation.
-5. **Check the schema** — If a JSON schema exists for this entity (in `Seeds/*/assets/schema-pack/`), align the Data Contract section with it.
-6. **Check the status registry** — If the component uses lifecycle statuses, reference `src/tokens/statusRegistry.ts`.
+5. **Check the schema** — If a JSON schema exists for this entity, align the Data Contract section with it.
+6. **Check the status registry** — If the component uses lifecycle statuses, reference your project's status token file.
 
 ### Phase 2 — Write the MDX Doc
 
@@ -107,14 +107,13 @@ src/assets/EntityName/
 
 ## Storybook Hierarchy Convention
 
-Use domain-based paths, not generic names:
+Use domain-based paths, not generic names. Structure by your product name and feature area:
 
 ```
-UDP / Cards / AssetCard
-UDP / Assets / AI Use Case
-UDP / Assets / Gen AI Model
-UDP / Design System / Reference / Asset Types
-UDP / Design System / Reference / Lifecycle Statuses
+[ProductName] / Cards / [EntityCard]
+[ProductName] / Assets / [EntityType]
+[ProductName] / Design System / Reference / Asset Types
+[ProductName] / Design System / Reference / Lifecycle Statuses
 ```
 
 Never use: `Card1`, `ComponentX`, `Misc / Thing`.
@@ -183,7 +182,7 @@ Every Edge Cases section must answer:
 ✓ Stories cover Default, Loading, Empty at minimum
 ✓ Entity components include System Role and Lineage sections
 ✓ MDX file does not import React explicitly
-✓ Storybook title uses domain hierarchy (`UDP / ...`), not generic names
+✓ Storybook title uses domain hierarchy (`[ProductName] / ...`), not generic names
 ✓ Content guidelines use entity-voice, not implementation-voice
 ✓ Edge Cases section addresses trust, layout, and meaning
 ✓ TypeScript compiles cleanly: `npx tsc --noEmit`

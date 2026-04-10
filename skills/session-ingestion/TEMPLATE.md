@@ -15,9 +15,9 @@ last_updated: 2026-03-18
 ```json
 [
   {
-    "study_id": "seed_lineage",
-    "study_name": "Data Lineage in UDP",
-    "seed": "Lineage",
+    "study_id": "seed-[name]",
+    "study_name": "[Study Name]",
+    "seed": "[Seed Name]",
     "methodology": "Ad hoc interviews"
   }
 ]
@@ -28,10 +28,10 @@ last_updated: 2026-03-18
 ```json
 [
   {
-    "participant_id": "lineage-example-participant",
+    "participant_id": "[seed]-example-participant",
     "display_name": "Example Participant",
-    "study_id": "seed_lineage",
-    "session_id": "Lineage-INT-001"
+    "study_id": "seed-[name]",
+    "session_id": "[Seed]-INT-001"
   }
 ]
 ```
@@ -42,7 +42,7 @@ last_updated: 2026-03-18
 [
   {
     "actor_id": "actor-example-speaker",
-    "session_id": "Lineage-INT-001",
+    "session_id": "[Seed]-INT-001",
     "display_name": "Example Speaker",
     "actor_type": "participant"
   }
@@ -57,14 +57,14 @@ last_updated: 2026-03-18
 [
   {
     "utterance_id": "utt-001-0001",
-    "study_id": "seed_lineage",
-    "session_id": "Lineage-INT-001",
-    "participant_id": "lineage-example-participant",
+    "study_id": "seed-[name]",
+    "session_id": "[Seed]-INT-001",
+    "participant_id": "[seed]-example-participant",
     "actor_id": "actor-example-speaker",
     "sequence": 1,
     "timestamp": "10:31:00",
     "speaker": "Example Speaker",
-    "text": "I usually verify source tables in Databricks first.",
+    "text": "I usually start by checking the data source directly.",
     "part_guess": "part2",
     "source_file": ".../Transcripts/Example Participant/transcript.html"
   }
@@ -73,18 +73,18 @@ last_updated: 2026-03-18
 
 ## 3) Session Output
 
-### sessions/Lineage-INT-001.json
+### sessions/[Seed]-INT-001.json
 
 ```json
 {
   "study": {
-    "study_id": "seed_lineage",
-    "study_name": "Data Lineage in UDP",
-    "seed": "Lineage",
+    "study_id": "seed-[name]",
+    "study_name": "[Study Name]",
+    "seed": "[Seed Name]",
     "methodology": "Ad hoc interviews"
   },
   "session": {
-    "session_id": "Lineage-INT-001",
+    "session_id": "[Seed]-INT-001",
     "session_key": "example-participant-transcript",
     "participant": "Example Participant",
     "source_file": ".../Transcripts/Example Participant/transcript.html",
@@ -102,7 +102,7 @@ last_updated: 2026-03-18
 ```json
 {
   "study": {
-    "study_id": "seed_lineage"
+    "study_id": "seed-[name]"
   },
   "counts": {
     "sessions": 7,
@@ -113,12 +113,12 @@ last_updated: 2026-03-18
   "generated_at": "2026-03-18T00:00:00Z",
   "manifest": [
     {
-      "session_id": "Lineage-INT-001",
+      "session_id": "[Seed]-INT-001",
       "participant": "Example Participant",
       "source_file": "...",
       "status": "processed",
       "utterance_count": 42,
-      "notes_file": ".../Output/notes/Lineage-INT-001_example-participant_notes.md"
+      "notes_file": ".../Output/notes/[Seed]-INT-001_example-participant_notes.md"
     }
   ]
 }
@@ -126,7 +126,7 @@ last_updated: 2026-03-18
 
 ## 5) Notes Rendering Context Contract
 
-Minimum context fields expected by the Lineage notes template:
+Minimum context fields expected by the notes template:
 
 - `session_id`
 - `session_date`
