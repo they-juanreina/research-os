@@ -2,41 +2,41 @@
 name: session-ingestion-examples
 description: "Examples for running Teams HTML transcript ingestion and notes rendering."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere - Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-18
 ---
 
 # Session Ingestion - Examples
 
-## Example 1 - Standard Lineage Run
+## Example 1 - Standard Run
 
 ### Command
 
 ```bash
-".venv/bin/python" "Seeds/Lineage/02_Sessions/Output/normalize_lineage_sessions.py"
+".venv/bin/python" "Seeds/[YourSeed]/02_Sessions/Output/normalize_sessions.py"
 ```
 
 ### Expected artifacts
 
-- `Seeds/Lineage/02_Sessions/Output/normalized/dim_studies.json`
-- `Seeds/Lineage/02_Sessions/Output/normalized/dim_participants.json`
-- `Seeds/Lineage/02_Sessions/Output/normalized/dim_actors.json`
-- `Seeds/Lineage/02_Sessions/Output/normalized/fact_utterances.json`
-- `Seeds/Lineage/02_Sessions/Output/normalized/master.json`
-- `Seeds/Lineage/02_Sessions/Output/normalized/sessions/*.json`
-- `Seeds/Lineage/02_Sessions/Output/notes/*_notes.md`
+- `Seeds/[YourSeed]/02_Sessions/Output/normalized/dim_studies.json`
+- `Seeds/[YourSeed]/02_Sessions/Output/normalized/dim_participants.json`
+- `Seeds/[YourSeed]/02_Sessions/Output/normalized/dim_actors.json`
+- `Seeds/[YourSeed]/02_Sessions/Output/normalized/fact_utterances.json`
+- `Seeds/[YourSeed]/02_Sessions/Output/normalized/master.json`
+- `Seeds/[YourSeed]/02_Sessions/Output/normalized/sessions/*.json`
+- `Seeds/[YourSeed]/02_Sessions/Output/notes/*_notes.md`
 
 ## Example 2 - Explicit Paths
 
 ### Command
 
 ```bash
-".venv/bin/python" "Seeds/Lineage/02_Sessions/Output/normalize_lineage_sessions.py" \
-  --transcripts-dir "Seeds/Lineage/02_Sessions/Transcripts" \
-  --schema-dir "Seeds/Lineage/02_Sessions/Output/schemas" \
-  --template "Seeds/Lineage/01_Plan/Interview_Notes_Template_Jinja2.md" \
-  --out-dir "Seeds/Lineage/02_Sessions/Output/normalized" \
-  --notes-out "Seeds/Lineage/02_Sessions/Output/notes"
+".venv/bin/python" "Seeds/[YourSeed]/02_Sessions/Output/normalize_sessions.py" \
+  --transcripts-dir "Seeds/[YourSeed]/02_Sessions/Transcripts" \
+  --schema-dir "Seeds/[YourSeed]/02_Sessions/Output/schemas" \
+  --template "Seeds/[YourSeed]/01_Plan/Interview_Notes_Template_Jinja2.md" \
+  --out-dir "Seeds/[YourSeed]/02_Sessions/Output/normalized" \
+  --notes-out "Seeds/[YourSeed]/02_Sessions/Output/notes"
 ```
 
 ### Expected terminal summary
@@ -44,8 +44,8 @@ last_updated: 2026-03-18
 ```text
 Processed sessions: <n>
 Normalized utterances: <m>
-JSON output: Seeds/Lineage/02_Sessions/Output/normalized
-Notes output: Seeds/Lineage/02_Sessions/Output/notes
+JSON output: Seeds/[YourSeed]/02_Sessions/Output/normalized
+Notes output: Seeds/[YourSeed]/02_Sessions/Output/notes
 ```
 
 ## Example 3 - Missing Template (Expected Stop)

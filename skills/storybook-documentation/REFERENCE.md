@@ -8,7 +8,7 @@ Copy and adapt per component. Replace `ComponentName` and all placeholder conten
 import { Meta, Canvas, ArgsTable } from '@storybook/blocks';
 import { ComponentName } from './ComponentName';
 
-<Meta title="UDP / Section / ComponentName" component={ComponentName} />
+<Meta title="[ProductName] / Section / ComponentName" component={ComponentName} />
 
 # ComponentName
 
@@ -23,7 +23,7 @@ Not what it renders — what it *means*.
 
 | Dimension | Value |
 |-----------|-------|
-| **Entity** | The domain object this represents (e.g., AI Use Case, Dataset) |
+| **Entity** | The domain object this represents (e.g., Record, Asset, Event) |
 | **Lifecycle Stage** | Where in its lifecycle this view applies (e.g., Discovery, Active, Deprecated) |
 | **System Role** | What function this serves (e.g., Synthesis Output, Navigation Entry, Status Signal) |
 
@@ -152,7 +152,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ComponentName } from './ComponentName';
 
 const meta: Meta<typeof ComponentName> = {
-  title: 'UDP / Section / ComponentName',
+  title: '[ProductName] / Section / ComponentName',
   component: ComponentName,
   parameters: {
     layout: 'centered',
@@ -228,37 +228,37 @@ export const MissingOptionalFields: Story = {
 
 ---
 
-## Worked Example: AssetCard
+## Worked Example: EntityCard
 
-This is how the existing `ProfileCard/AssetCard` maps to the 10 sections:
+This is how a typical `EntityCard` component maps to the 10 sections:
 
-| Section | AssetCard Implementation |
-|---------|------------------------|
-| **Intent** | Primary discovery surface for UDP assets. Communicates identity, status, and actionability at a glance. |
-| **Concept Mapping** | Entity: Any UDP asset. Stage: All lifecycle stages. Role: Navigation entry + status signal. |
-| **Anatomy** | Icon (asset type), Title, Description, Asset Type Chip, Status Chip (conditional), Checkbox (admin), Action Buttons (bookmark, more). |
-| **Variants** | Default, Hovered, Focused, Pressed, Disabled; plus per-asset-type variants (Model, AI Use Case, Dataset). |
+| Section | EntityCard Implementation |
+|---------|--------------------------|
+| **Intent** | Primary discovery surface for domain entities. Communicates identity, status, and actionability at a glance. |
+| **Concept Mapping** | Entity: Any domain record. Stage: All lifecycle stages. Role: Navigation entry + status signal. |
+| **Anatomy** | Icon (entity type), Title, Description, Type Chip, Status Chip (conditional), Checkbox (admin), Action Buttons (bookmark, more). |
+| **Variants** | Default, Hovered, Focused, Pressed, Disabled; plus per-entity-type variants based on your domain model. |
 | **Behavior** | Hover → elevation + action reveal. Click → profile navigation. Checkbox → batch operations (admin only). |
-| **Data Contract** | `AssetCardProps` from `ProfileCard.types.ts` — title, description, statusId, assetCategory, etc. |
-| **Content Guidelines** | Titles are asset names (proper nouns). Descriptions are 1–2 sentences max. No marketing language. |
-| **Usage** | Use in catalog grid, search results, related assets. Avoid in dashboards (use summary widgets). |
+| **Data Contract** | `EntityCardProps` from `EntityCard.types.ts` — title, description, statusId, entityCategory, etc. |
+| **Content Guidelines** | Titles are entity names (proper nouns). Descriptions are 1–2 sentences max. No marketing language. |
+| **Usage** | Use in catalog grids, search results, related entity lists. Avoid in dashboards (use summary widgets). |
 | **Edge Cases** | Description overflow → 2-line clamp. Missing status → no chip shown. Too many actions → overflow menu. |
-| **Evolution** | Asset lifecycle: Discovered → Triaged → Assigned → In Review → Certified → Active → (Deprecated / Retired). |
+| **Evolution** | Entity lifecycle: Discovered → In Review → Active → (Deprecated / Retired). Adapt stages to your domain. |
 
 ---
 
-## MDX Helper Components Available
+## MDX Helper Components
 
-The project's existing `AssetTypes.mdx` defines reusable helpers. Use them in your docs:
+If your project defines shared MDX helpers, use them in your docs. Common patterns:
 
 | Helper | Usage |
 |--------|-------|
-| `<Note>` | Green-bordered callout for design notes |
+| `<Note>` | Callout for design notes |
 | `<Callout color="...">` | Colored callout for warnings or emphasis |
 | `<Evidence id="..." quote="..." source="..." />` | Research evidence citation |
 | `<DosDonts dos={[...]} donts={[...]} />` | Content guideline table |
 
-To use them, extract them into a shared file or import from `AssetTypes.mdx` (currently inline).
+Extract helpers into a shared MDX file and import from there rather than inlining.
 
 ---
 
@@ -270,4 +270,4 @@ To use them, extract them into a shared file or import from `AssetTypes.mdx` (cu
 - [ ] `npx tsc --noEmit` passes
 - [ ] Storybook renders without console errors
 - [ ] No explicit `import React from 'react'` in MDX files
-- [ ] Storybook title uses `UDP / ...` hierarchy
+- [ ] Storybook title uses `[ProductName] / ...` hierarchy

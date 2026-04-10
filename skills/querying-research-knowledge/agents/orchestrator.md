@@ -3,7 +3,7 @@ agent: orchestrator
 team: querying-research-knowledge
 role: "Coordinator — receives the question, decodes it, dispatches parallel corpus searchers, collects evidence, routes to assessor and composer"
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-06
 ---
 
