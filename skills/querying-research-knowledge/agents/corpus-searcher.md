@@ -4,7 +4,7 @@ team: querying-research-knowledge
 role: "Single-seed search specialist — examines one seed's full directory tree and returns a structured evidence packet"
 concurrency: "N instances in parallel (one per seed)"
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-06
 ---
 

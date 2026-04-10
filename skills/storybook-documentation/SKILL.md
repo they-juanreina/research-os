@@ -2,7 +2,7 @@
 name: storybook-documentation
 description: "Generates structured Storybook documentation for UI components — MDX docs, stories, and system-level metadata. Produces intent-driven documentation that encodes data contracts, lifecycle evolution, lineage, and behavioral states, not just props and visuals. Triggers: document component, storybook docs, component documentation, MDX docs, write stories, component contract, design system docs, describe component."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-04-09
 ---
 

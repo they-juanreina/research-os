@@ -1,8 +1,8 @@
 ---
 name: session-ingestion
-description: "Normalizes Teams HTML session transcripts into structured JSON and renders filled discussion notes from a Jinja2 template. Use when interview exports are HTML (not DOCX transcripts) and you need analysis-ready files for coding, issue logging, journey mapping, and synthesis. Triggers: session ingestion, normalize transcript html, teams transcript to json, render interview notes, lineage transcript processing, transcript normalization pipeline."
+description: "Normalizes Teams HTML session transcripts into structured JSON and renders filled discussion notes from a Jinja2 template. Use when interview exports are HTML (not DOCX transcripts) and you need analysis-ready files for coding, issue logging, journey mapping, and synthesis. Triggers: session ingestion, normalize transcript html, teams transcript to json, render interview notes, transcript normalization pipeline."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere - Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-18
 ---
 

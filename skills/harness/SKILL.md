@@ -2,7 +2,7 @@
 name: harness
 description: "Research OS guided entry point. Use when the user doesn't know what to do, wants an overview of available research capabilities, wants to know what phase they're in, or needs help choosing a skill. Routes to the right skill based on research phase and context. Also orients new users and shows the current state of Seeds. Triggers: harness, what should I do, where do I start, help, orient me, what's next, I'm new here, guide me, I don't know what skill to use, what can you do, research os help, show me what's available, I need to, overview, navigate, get started."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-04-10
 ---
 

@@ -2,7 +2,7 @@
 name: setup
 description: "Scaffolds a complete Research OS project structure for a new research initiative. Use when starting a new project from scratch, onboarding a new team member, or replicating the Research OS structure in a new directory. Creates the full directory scaffold, CLAUDE.md, settings.json, and copies all skills. Triggers: setup research os, new project, initialize research os, scaffold project, onboard, replicate research os, set up for new project, create research os, new research project."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere — Internal Use Only"
+license: "MIT"
 last_updated: 2026-04-10
 ---
 
@@ -22,8 +22,8 @@ Ask for the following before creating any files. Do not invent values.
 | Field | Description | Example |
 |-------|-------------|---------|
 | **Project Name** | Short name for this research project | "Notification Preferences" |
-| **Organization / Client** | Client or team this research serves | "John Deere — Precision Ag" |
-| **Research Lead** | Name of the person leading research | "Trey Secord" |
+| **Organization / Client** | Client or team this research serves | "Acme Corp — Product Team" |
+| **Research Lead** | Name of the person leading research | "Alex Rivera" |
 | **Destination Path** | Full path where the new project should live | `~/Projects/Notification-Research` |
 | **Pronouns** (optional) | Pronouns for the research lead | defaults to they/them |
 

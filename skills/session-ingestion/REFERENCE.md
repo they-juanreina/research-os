@@ -2,7 +2,7 @@
 name: session-ingestion-reference
 description: "Reference details for Teams HTML transcript normalization and notes rendering workflow."
 author: "Juan Reina (they/them)"
-license: "Valtech / John Deere - Internal Use Only"
+license: "MIT"
 last_updated: 2026-03-18
 ---
 
