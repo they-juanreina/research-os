@@ -23,7 +23,7 @@ Ask for the following before creating any files. Do not invent values.
 |-------|-------------|---------|
 | **Project Name** | Short name for this research project | "Notification Preferences" |
 | **Organization / Client** | Client or team this research serves | "Acme Corp — Product Team" |
-| **Research Lead** | Name of the person leading research | "Alex Rivera" |
+| **Research Lead** | Name of the person leading research | "Trey Secord" |
 | **Destination Path** | Full path where the new project should live | `~/Projects/Notification-Research` |
 | **Pronouns** (optional) | Pronouns for the research lead | defaults to they/them |
 
