@@ -4,7 +4,7 @@ team: querying-research-knowledge
 role: "Final answer assembly — transforms assessed evidence into the SKILL.md output format or generates a seed brief when confidence is None"
 concurrency: "1 (singleton, runs after evidence assessor completes)"
 author: "Juan Reina (they/them)"
-license: "MIT"
+license: "Valtech / John Deere — Internal Use Only"
 last_updated: 2026-03-06
 ---
 
