@@ -1,73 +1,133 @@
-# Skills 3.0
+# Research OS — Skills Library
 
-A library of research skills integrating plural epistemology and radical tenderness as methodological requirements.
+A library of research skills for human-led, AI-assisted UX research operations.
 
 **Human-led and AI-assisted.** Crafted by Juan Reina (they/them).
 
 ---
 
-## Shared Foundation
+## Getting Started
 
-Every skill in this library depends on two shared files:
+### What you need
+- [Claude Code](https://claude.ai/code) — the desktop or VS Code extension
+- This repository open as your project folder
+
+### First time here?
+
+Open this folder in Claude Code and type:
+
+```
+/harness
+```
+
+That's it. The harness will read the current state of your project, show you what's in progress, and guide you to the right next step. You don't need to know which skill to use — just describe what you're trying to do and it will route you.
+
+### Setting up a new project
+
+If you want to use Research OS for a new project (new team, new initiative), type:
+
+```
+/setup
+```
+
+It will ask you a few questions (project name, team, research lead) and scaffold a complete ready-to-use Research OS folder for you.
+
+---
+
+## How to use a skill
+
+Every skill is a slash command. Type it in Claude Code and follow the prompts.
+
+**Example — you just finished 5 interviews and want to find patterns:**
+```
+/thematic-coding
+```
+Then paste or describe your session notes. Claude will walk you through the rest.
+
+**Not sure which skill to use?** Always start with `/harness`.
+
+---
+
+## All Skills
+
+| When you want to… | Type… | Phase |
+|---|---|---|
+| Get oriented or not sure what to do | `/harness` | Start here |
+| Start a new research initiative | `/planting-research-seeds` | Plan |
+| Write a discussion guide or session script | `/discussion-guide` | Plan |
+| Take notes during a live session | `/session-note-taking` | Collect |
+| Process a Teams transcript or recording | `/session-ingestion` | Collect |
+| Log a usability issue you just observed | `/issue-log` | Collect |
+| Code session data into themes | `/thematic-coding` | Synthesize |
+| Build a journey map | `/journey-mapping` | Synthesize |
+| Extract How Might We statements | `/hmw-extraction` | Synthesize |
+| Check if you have enough data | `/saturation-analysis` | Evaluate |
+| Track research success criteria | `/success-criteria-tracking` | Evaluate |
+| Run a heuristic / expert UX review | `/heuristic-eval` | Evaluate |
+| Write a synthesis report for stakeholders | `/synthesis-reporting` | Report |
+| Ask a question about existing research | `/querying-research-knowledge` | Query |
+| Set up Research OS for a new project | `/setup` | Setup |
+| Document a UI component in Storybook | `/storybook-documentation` | Design |
+
+---
+
+## How research is organized
+
+Each research initiative is called a **seed**. Seeds live in the `Seeds/` folder and follow a four-phase structure:
+
+```
+Seeds/
+└── [Seed Name]/
+    ├── 01_Plan/        ← Discussion guides, research plans
+    ├── 02_Sessions/    ← Transcripts, session notes
+    ├── 03_Synthesis/   ← Themes, journey maps, HMW statements
+    └── 04_Evaluation/  ← Issue logs, success criteria, saturation
+```
+
+Skills know about this structure — you don't need to manage it manually.
+
+---
+
+## Core principles
+
+Every skill applies the same epistemic framework ([`CORE.md`](CORE.md)):
+
+- Categories are constructed, not natural — binary labels require justification
+- Context must be preserved before compressing data into outputs
+- Edge cases and minority perspectives are never discarded
+- All outputs are provisional — one analytical lens at one point in time
+- Automation amplifies human judgment; it does not replace it
+
+---
+
+## For contributors and technical readers
+
+### Shared foundation
 
 | File | Purpose |
 |------|---------|
-| [`CORE.md`](CORE.md) | Shared epistemic framework — load with every skill invocation |
+| [`CORE.md`](CORE.md) | Shared epistemic framework — loaded with every skill invocation |
 | [`PIPELINE.md`](PIPELINE.md) | Composability model — how skills chain and hand off outputs |
+| [`LANGUAGE_POLICY.md`](LANGUAGE_POLICY.md) | Language and pronoun handling standards |
 
-**Invocation pattern**: `CORE.md` + `SKILL.md` is sufficient for most tasks. Add `REFERENCE.md` for edge cases; add `EXAMPLES.md` for onboarding or format uncertainty.
+**Invocation pattern**: `CORE.md` + `SKILL.md` is sufficient for most tasks. Add `REFERENCE.md` for edge cases; `EXAMPLES.md` for onboarding or format clarity.
 
----
-
-## Available Skills
-
-| Skill | Purpose | Phase |
-|-------|---------|-------|
-| [discussion-guide](skills/discussion-guide/SKILL.md) | Generate teleprompter-ready facilitator scripts | Plan |
-| [session-note-taking](skills/session-note-taking/SKILL.md) | Structured observation during moderated sessions | Collect |
-| [issue-log](skills/issue-log/SKILL.md) | Track and categorize usability/research issues | Collect |
-| [thematic-coding](skills/thematic-coding/SKILL.md) | Transform raw session data into a validated codebook and coded evidence dataset | Synthesize |
-| [journey-mapping](skills/journey-mapping/SKILL.md) | Synthesize qualitative data into experience maps | Synthesize |
-| [hmw-extraction](skills/hmw-extraction/SKILL.md) | Transform pain points into opportunity statements | Synthesize |
-| [saturation-analysis](skills/saturation-analysis/SKILL.md) | Determine when research reaches thematic saturation | Evaluate |
-| [success-criteria-tracking](skills/success-criteria-tracking/SKILL.md) | Map objectives to indicators and track go/no-go | Evaluate |
-| [querying-research-knowledge](skills/querying-research-knowledge/SKILL.md) | Answer questions from the research corpus with evidence and confidence ratings | Query |
-| [planting-research-seeds](skills/planting-research-seeds/SKILL.md) | Create a new research seed with metadata, starter plan, and phase folders | Plant |
-| [heuristic-eval](skills/heuristic-eval/SKILL.md) | Run expert UX reviews; every evaluation produces designer action briefs and research seed briefs | Evaluate |
-| [synthesis-reporting](skills/synthesis-reporting/SKILL.md) | Package synthesis findings into a confidence-rated, evidence-grounded stakeholder report | Report |
-
----
-
-## Skill Structure
+### Skill structure
 
 Each skill directory contains:
 
-- `SKILL.md` — Core instructions: workflow, output format, quality gates *(load for every task)*
+- `SKILL.md` — Workflow, output format, quality gates *(load for every task)*
 - `REFERENCE.md` — Detailed methodology, edge cases, pitfalls *(load when needed)*
 - `EXAMPLES.md` — Worked examples *(load for onboarding or format clarity)*
 - `TEMPLATE.md` — Blank output template *(where applicable)*
 - `scripts/` — Python utilities *(where applicable)*
 
----
+### Slash commands
 
-## Core Epistemic Principles
+All 16 skills are wired as project-level slash commands in `.claude/commands/`. Anyone opening this repo in Claude Code gets them automatically — no local configuration needed.
 
-See [`CORE.md`](CORE.md) for the full framework. In brief:
+### Separation principle
 
-1. Intelligence is orchestrated, not generated.
-2. Categories are constructed, not natural.
-3. Binary assumptions must be explicitly justified.
-4. Compression requires context.
-5. Automation amplifies intention; it does not replace judgment.
-6. Care precedes optimization.
-7. Outputs are provisional and perspective-dependent.
+**Skills consume Seeds. Seeds never reference Skills.**
 
----
-
-## Separation Principle
-
-**Experiments consume Skills. Skills never reference Experiments.**
-
-Skills are completely experiment-agnostic reusable analytical capabilities.
-
-See [`LANGUAGE_POLICY.md`](LANGUAGE_POLICY.md) for language and pronoun handling standards.
+Skills are experiment-agnostic reusable analytical capabilities. Experiments (Seeds) use skills but never redefine them.
