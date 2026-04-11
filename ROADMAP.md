@@ -20,26 +20,77 @@ and **human-led** (the system amplifies judgment, it does not replace it).
 
 ---
 
-## Phase 0 — Open Source Foundation
+## Anthropic's guidelines informing this roadmap
+
+Anthropic's ["Building Effective Agents"](https://www.anthropic.com/research/building-effective-agents)
+and ["Equipping Agents for the Real World with Agent Skills"](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
+establish three principles that every phase of this roadmap must satisfy:
+
+**Start with the simplest solution that works.** Only add complexity when a
+simpler approach demonstrably fails. The current file-traversal retrieval is simple
+and correct for small seed libraries. Before adding RAG, evals must show where it
+actually breaks down — not where we assume it does.
+
+**Design skills for agents, not developers.** Skills must be dense enough to work
+with the minimum invocation (`CORE.md` + `SKILL.md`). `REFERENCE.md` and
+`EXAMPLES.md` are loaded only when needed. This progressive disclosure pattern
+keeps context windows lean without sacrificing depth.
+
+**Human oversight is the invariant.** Every automated feature — retrieval, gap
+detection, staleness flags, eval scoring — surfaces findings for a researcher to
+act on. Nothing decides autonomously.
+
+---
+
+## Phase 0 — Open Source Foundation ✓
 
 *Make the project ready for external contributors.*
 
+| Issue | Title | Status |
+|-------|-------|--------|
+| #5 | Add CONTRIBUTING.md with care-first contribution guidelines | Done |
+| #6 | Add CODE_OF_CONDUCT.md grounded in the project's epistemic stance | Done |
+| #7 | GitHub issue and PR templates | Done |
+| #8 | GitHub Actions CI for skill structure validation | Done |
+
+---
+
+## Phase 0.5 — Skill Evals
+
+*Before building more, understand how well what exists actually works.*
+
+This phase exists because of a direct Anthropic recommendation: run evaluations
+before adding complexity. The 16 core skills have never been systematically tested
+against their own quality gates. That gap is a risk — skills may formally apply
+`CORE.md` principles without structurally enforcing them. Evals make that visible.
+
+This is also the **best starting point for collaboration.** Running evals requires
+no engineering background — just a Claude Code session, a research artifact, and
+the rubric. Friends and collaborators can contribute eval findings before the
+codebase is ready for code contributions. Every eval finding improves the skills
+directly and creates a benchmark against which future changes (including RAG) are
+measured.
+
 | Issue | Title | Priority |
 |-------|-------|----------|
-| #5 | Add CONTRIBUTING.md with care-first contribution guidelines | High |
-| #6 | Add CODE_OF_CONDUCT.md grounded in the project's epistemic stance | High |
-| #7 | GitHub issue and PR templates | Medium |
-| #8 | GitHub Actions CI for skill structure validation | Medium |
+| #23 | Build eval infrastructure — directory structure, rubric format, and LLM-as-judge runner | High |
+| #24 | Write eval cases for all 16 core skills (normal, edge, adversarial) | High |
+| #25 | Collaborative eval guide — how to run evals and submit findings | High |
+| #26 | Add eval gate to CI for community skill submissions | Medium |
 
-**Done when:** A new contributor can open the repo, understand the epistemic contract,
-and submit a skill or methodology change with confidence that it will be reviewed on
-the right terms.
+**Done when:** Every core skill has a passing eval suite covering normal, edge, and
+adversarial cases. Systematic failure modes are documented. Collaborators can run
+evals independently using only Claude Code. The eval suite becomes the baseline
+against which every future change is measured.
 
 ---
 
 ## Phase 1 — RAG: Local Semantic Evidence Layer
 
 *Replace file-traversal retrieval with semantic search. No cloud. No vendor lock-in.*
+
+**Prerequisite: Phase 0.5 must be complete.** The eval baseline is what tells us
+whether RAG actually improves retrieval quality — or just adds complexity.
 
 ### Open source stack
 
@@ -50,12 +101,13 @@ the right terms.
 | Default model | `all-MiniLM-L6-v2` (80MB, local) | Apache 2.0 |
 | Multilingual | `paraphrase-multilingual-MiniLM-L12-v2` | Apache 2.0 |
 | Keyword search | [rank_bm25](https://github.com/dorianbrown/rank_bm25) | MIT |
+| Document ingestion | [LlamaIndex](https://github.com/run-llama/llama_index) (lower-level APIs only) | MIT |
 | NLP (noun phrases) | [spaCy](https://spacy.io/) `en_core_web_sm` | MIT |
 
 **Dependency chain (must be built in order):**
 
 ```
-#9 Evidence Unit Schema
+#9  Evidence Unit Schema
         ↓
 #10 Local Evidence Indexer (ChromaDB + sentence-transformers)
         ↓
@@ -68,7 +120,9 @@ the right terms.
 
 **Done when:** A researcher can ask `querying-research-knowledge` a question using
 their own vocabulary and receive evidence even when the corpus uses different words
-to describe the same experience. The retrieval explains itself.
+to describe the same experience. The retrieval explains itself. Eval scores are
+equal to or better than Phase 0.5 baseline — if they aren't, the RAG layer is
+adding noise, not signal.
 
 ---
 
@@ -160,11 +214,39 @@ All dependencies are chosen against four criteria:
 4. **Minimal footprint** — no databases requiring a running server (ChromaDB is
    file-persistent, not a server)
 
-The stack does not include LangChain or LlamaIndex by design. Those frameworks
-add abstraction layers that obscure what the retrieval system is actually doing —
-which conflicts directly with the transparency principle. Direct use of
-ChromaDB + sentence-transformers is more legible and more aligned with the
-project's commitment to explainability.
+### On LangChain — excluded
+
+LangChain's chain and agent abstractions obscure execution in ways that conflict
+directly with the transparency principle. Debugging why a chain produced a
+particular result requires stepping through several abstraction layers — which
+makes it difficult to understand, audit, or explain retrieval behavior to a
+researcher. It also has a pattern of frequent breaking changes between major
+versions, which increases maintenance burden without proportional benefit for a
+focused, file-based RAG system like this one.
+
+### On LlamaIndex — used selectively
+
+LlamaIndex is purpose-built for document ingestion and RAG, and the blanket
+exclusion in earlier drafts of this roadmap was too broad. The concern about
+abstraction applies to its high-level orchestration APIs — not to its lower-level
+document utilities. Research OS uses LlamaIndex for:
+
+- **Document ingestion** (`SimpleDirectoryReader`, `MarkdownReader`) — loading
+  session notes, synthesis artifacts, and CSV files into the indexing pipeline
+  without reimplementing file parsing for each format
+- **Chunking** (`SentenceWindowNodeParser`) — splitting session notes into
+  evidence-sized units with surrounding context preserved
+- **RAG evaluation** (`FaithfulnessEvaluator`, `RelevancyEvaluator`) — measuring
+  retrieval quality against the eval baseline from Phase 0.5
+
+The vector store (ChromaDB), the embedding model (sentence-transformers), and the
+retrieval logic remain direct and explicit. LlamaIndex handles only the document
+lifecycle between raw files and indexed evidence units — the part where using a
+well-maintained library is genuinely simpler than building it ourselves.
+
+This position is consistent with Anthropic's simplicity principle: use maintained
+libraries where they reduce complexity; build directly where transparency is
+non-negotiable.
 
 ---
 
