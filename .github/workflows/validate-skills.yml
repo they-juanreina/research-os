@@ -1,0 +1,39 @@
+name: Validate Skills
+
+on:
+  pull_request:
+    paths:
+      - "skills/**"
+      - ".claude/commands/**"
+      - "CORE.md"
+      - "PIPELINE.md"
+      - "LANGUAGE_POLICY.md"
+
+jobs:
+  validate:
+    name: Skill Structure & Language Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Python syntax check
+        run: |
+          echo "=== Python syntax check ==="
+          FAILED=0
+          find skills -name "*.py" | while read f; do
+            python -m py_compile "$f" && echo "  OK  $f" || { echo "  FAIL $f"; FAILED=1; }
+          done
+          exit $FAILED
+
+      - name: Skill structure validation
+        run: python .github/scripts/validate_structure.py
+
+      - name: Language policy lint
+        run: python .github/scripts/lint_language.py
