@@ -57,6 +57,7 @@ Then paste or describe your session notes. Claude will walk you through the rest
 | Start a new research initiative | `/planting-research-seeds` | Plan |
 | Write a discussion guide or session script | `/discussion-guide` | Plan |
 | Take notes during a live session | `/session-note-taking` | Collect |
+| Transcribe a raw audio/video recording | `/meeting-transcription` | Collect |
 | Process a Teams transcript or recording | `/session-ingestion` | Collect |
 | Log a usability issue you just observed | `/issue-log` | Collect |
 | Code session data into themes | `/thematic-coding` | Synthesize |
