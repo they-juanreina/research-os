@@ -9,6 +9,20 @@
 *.swp
 *.swo
 
+# Personal knowledge tooling (Obsidian workspaces are user-specific)
+.obsidian/
+
+# AI assistant configs (per-user, not for distribution)
+.github/copilot/
+.copilot/
+.cursor/
+.cursorrules
+
+# Claude Code local-only settings (the global settings.json IS shared, but
+# settings.local.json holds the user's machine-specific permission allowlist)
+settings.local.json
+.claude/settings.local.json
+
 # Python
 __pycache__/
 *.py[cod]
@@ -38,3 +52,10 @@ dist/
 
 # Claude Code worktrees (local only)
 worktrees/
+
+# Bundled services — local venvs, secrets, and runtime outputs
+# (no trailing slashes so the patterns also match symlinks pointing at venvs)
+services/*/.venv
+services/*/.env
+services/*/outputs/
+services/*/__pycache__/

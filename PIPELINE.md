@@ -44,6 +44,7 @@ Report       →    04 Designer Actions &      →  Action Briefs
 | Phase | Skill | Key Outputs | Fed Into |
 |-------|-------|-------------|----------|
 | Plan | Discussion Guide | session script, topic tracker | Session Note-Taking (session framing) |
+| Collect | Meeting Transcription | diarized `segments[]` JSON per recording | Session Ingestion (when wired for JSON), Thematic Coding |
 | Collect | Session Note-Taking | `observations`, `quotes`, `pain_points`, `timing_data` | Thematic Coding, Issue Log |
 | Collect | Issue Log | `issues[]` — ID, severity, role, frequency, effort | Success Criteria Tracking (behavioral evidence) |
 | Synthesize | Thematic Coding | `codebook` (themes + definitions), `coded_dataset` (evidence units + codes) | Journey Mapping, HMW Extraction, Saturation Analysis, Issue Log |
@@ -60,6 +61,7 @@ Report       →    04 Designer Actions &      →  Action Briefs
 
 | From Skill | Output Field | → | To Skill | Input Field |
 |------------|-------------|---|----------|-------------|
+| Meeting Transcription | diarized `segments[]` JSON | → | Session Ingestion / Thematic Coding | transcript source |
 | Session Note-Taking | `observations[]`, `quotes[]`, `pain_points[]` | → | Thematic Coding | evidence units (raw input) |
 | Thematic Coding | `codebook` (themes + definitions) | → | Saturation Analysis | theme list for tracking table |
 | Thematic Coding | `coded_dataset` (pain-point themes) | → | HMW Extraction | pain point list with evidence |

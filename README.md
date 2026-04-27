@@ -33,6 +33,19 @@ If you want to use Research OS for a new project (new team, new initiative), typ
 
 It will ask you a few questions (project name, team, research lead) and scaffold a complete ready-to-use Research OS folder for you.
 
+### Setting up the transcription service (optional)
+
+Some skills (`/meeting-transcription`) need a local FastAPI service that runs WhisperX + pyannote on your machine. First time:
+
+```bash
+cd services/meeting-transcribe
+./setup.sh
+# edit .env and set HF_TOKEN (after accepting terms on the pyannote page)
+./run.sh
+```
+
+The service exposes an MCP tool (`meeting-transcribe.transcribe_audio`) that Claude calls automatically — no extra config in Claude Code beyond having the plugin enabled. See `services/meeting-transcribe/README.md` for full setup details.
+
 ---
 
 ## How to use a skill
@@ -57,6 +70,7 @@ Then paste or describe your session notes. Claude will walk you through the rest
 | Start a new research initiative | `/planting-research-seeds` | Plan |
 | Write a discussion guide or session script | `/discussion-guide` | Plan |
 | Take notes during a live session | `/session-note-taking` | Collect |
+| Transcribe a raw audio/video recording | `/meeting-transcription` | Collect |
 | Process a Teams transcript or recording | `/session-ingestion` | Collect |
 | Log a usability issue you just observed | `/issue-log` | Collect |
 | Code session data into themes | `/thematic-coding` | Synthesize |
