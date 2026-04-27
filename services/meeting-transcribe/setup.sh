@@ -4,9 +4,38 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PYTHON="${PYTHON:-python3}"
+# Find a Python 3.11+ interpreter. WhisperX and many of the ML deps require >=3.10.
+find_python() {
+  if [ -n "${PYTHON:-}" ]; then echo "$PYTHON"; return; fi
+  for cand in python3.13 python3.12 python3.11 python3; do
+    if command -v "$cand" >/dev/null 2>&1; then
+      ver=$("$cand" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+      major=${ver%.*}; minor=${ver#*.}
+      if [ "$major" -ge 3 ] && [ "$minor" -ge 11 ]; then
+        echo "$cand"; return
+      fi
+    fi
+  done
+  return 1
+}
 
-echo "==> Using $($PYTHON --version)"
+PYTHON="$(find_python || true)"
+if [ -z "$PYTHON" ]; then
+  echo "error: need Python 3.11+ on PATH (try: brew install python@3.11)" >&2
+  exit 1
+fi
+
+echo "==> Using $($PYTHON --version) at $(command -v "$PYTHON")"
+if [ -d .venv ]; then
+  existing=$(.venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null || echo "?")
+  if [ "$existing" != "?" ]; then
+    existing_major=${existing%.*}; existing_minor=${existing#*.}
+    if [ "$existing_major" -lt 3 ] || [ "$existing_minor" -lt 11 ]; then
+      echo "==> Existing .venv uses Python $existing — recreating with $PYTHON"
+      rm -rf .venv
+    fi
+  fi
+fi
 if [ ! -d .venv ]; then
   echo "==> Creating .venv"
   "$PYTHON" -m venv .venv
