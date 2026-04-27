@@ -13,7 +13,9 @@ last_updated: 2026-04-27
 **Input**: A single audio or video file (any codec ffmpeg can decode).
 **Output**: One JSON file per recording with diarized segments, detected language, speaker list, and per-stage timings.
 
-**Backend**: Defaults to MLX (Apple GPU native, RTF ~0.10–0.20× on M-series). Set `TRANSCRIBE_BACKEND=whisperx` to fall back to the CPU+ctranslate2 path if MLX is unavailable.
+**Backend**: Defaults to MLX (Apple GPU native, RTF ~0.08–0.20× on M-series). Set `TRANSCRIBE_BACKEND=whisperx` to fall back to the CPU+ctranslate2 path if MLX is unavailable.
+
+**Capability vs methodology**: The transcription *capability* is the `meeting-transcribe.transcribe_audio` MCP tool, exposed by the bundled service in `services/meeting-transcribe/`. This skill is the *methodology* layer — it decides parameters (hotwords by study, speaker hints, naming, output location, quality gates) and then calls the tool. If the service isn't running, instruct the user to start it before continuing.
 
 This skill is the **upstream entry point** when sessions are recorded but no Teams HTML transcript is available. Its output replaces (or augments) the Teams HTML that `session-ingestion` consumes.
 
@@ -25,7 +27,13 @@ This skill is the **upstream entry point** when sessions are recorded but no Tea
 
 2. **Confirm transcript destination** — Default `Seeds/<seed>/02_Sessions/Transcripts/`. Create if missing.
 
-3. **Service preflight** — `GET http://127.0.0.1:8787/health`. If down, instruct the user to run `meeting-transcribe/run.sh` and wait for "Ready". Do not attempt to start it yourself if the working directory is not the service repo.
+3. **Service preflight** — Confirm the MCP tool `meeting-transcribe.transcribe_audio` is available (or `GET http://127.0.0.1:8787/health` returns 200). If neither responds, instruct the user:
+
+   ```bash
+   cd <plugin-root>/services/meeting-transcribe && ./run.sh
+   ```
+
+   Wait for the log line `Ready (backend=mlx)`. Do not attempt to start the service yourself unless explicitly asked.
 
 4. **Decide alignment** — On the MLX backend, word timestamps are nearly free (same forward pass). On the whisperx fallback, alignment adds ~30–40% via a separate wav2vec2 model. Default `align=false`. Enable only when the downstream task needs word timestamps (e.g., highlight reels, sub-second cue extraction).
 
@@ -33,9 +41,21 @@ This skill is the **upstream entry point** when sessions are recorded but no Tea
 
 6. **Decide hotwords** — If the recording mentions product/tool/team-specific terms not in the default dictionary, append them to the `hotwords` field. Default dictionary covers Valtech / John Deere / common tech vocabulary.
 
-7. **POST to service** — Submit `audio` (multipart) plus the form fields chosen above.
+7. **Call the MCP tool** — Invoke `meeting-transcribe.transcribe_audio` with the parameters chosen above:
 
-8. **Persist output** — Move the returned JSON from the service `outputs/` folder into the seed's `02_Sessions/Transcripts/` folder, renamed `<sessionID>_<participant>.json`.
+   ```
+   transcribe_audio(
+     audio_path="/abs/path/to/recording.m4a",
+     language="es",
+     num_speakers=2,
+     hotwords="...optional override...",
+     align=False,
+   )
+   ```
+
+   The tool runs synchronously (a 1-hour recording takes ~5–12 min on Apple Silicon) and returns the full payload.
+
+8. **Persist output** — The service writes the JSON to its own `outputs/` folder. Move/copy it into the seed's `02_Sessions/Transcripts/` folder, renamed `<sessionID>_<participant>.json`. The path is in the response's `saved_to` field.
 
 9. **Quality check** — Verify diarization produced a plausible speaker count, language matches expectations, and `realtime_factor` is reasonable (see Reference for ranges).
 
@@ -81,30 +101,29 @@ Required fields: `language`, `speakers`, `segments[]`, `source_filename`, `creat
 
 ## Invocation
 
-**Service:**
+**Start the service** (one-time per session):
 
 ```bash
-cd ~/dev/meeting-transcribe && ./run.sh
+cd <plugin-root>/services/meeting-transcribe && ./run.sh
 ```
 
-**Single file (CLI):**
+**Primary path — MCP tool** (what this skill calls):
 
-```bash
-./cli_test.sh path/to/recording.mp4 [language]
-```
+The tool `meeting-transcribe.transcribe_audio` is wired up via `.mcp.json` at the plugin root. Claude calls it directly with the resolved parameters. No curl needed. See `services/meeting-transcribe/README.md` for the full input/output contract.
 
-**Single file (HTTP):**
+**Escape hatches for human use** (not part of the skill flow):
 
-```bash
-curl -sS --fail-with-body http://127.0.0.1:8787/transcribe \
-  -F "audio=@path/to/recording.mp4" \
-  -F "language=es" \
-  -F "num_speakers=2" \
-  -F "align=false" \
-  > path/to/transcript.json
-```
+- **Web UI:** `http://127.0.0.1:8787/` — drag-and-drop with all controls.
+- **CLI:** `cd services/meeting-transcribe && ./cli_test.sh path/to/recording.mp4 [language]`
+- **Raw HTTP:**
+  ```bash
+  curl -sS --fail-with-body http://127.0.0.1:8787/transcribe \
+    -F "audio=@path/to/recording.mp4" \
+    -F "language=es" -F "num_speakers=2" -F "align=false" \
+    > path/to/transcript.json
+  ```
 
-**UI:** Open `http://127.0.0.1:8787/` for drag-and-drop with full controls.
+All paths produce identical JSON output.
 
 ---
 
@@ -130,7 +149,9 @@ curl -sS --fail-with-body http://127.0.0.1:8787/transcribe \
 ## References
 
 - `REFERENCE.md` — performance tuning, hotword strategy, troubleshooting, alignment trade-offs
-- `~/dev/meeting-transcribe/service.py` — service implementation
-- `~/dev/meeting-transcribe/run.sh` — start command
+- `services/meeting-transcribe/service.py` — service implementation (FastAPI + MCP)
+- `services/meeting-transcribe/README.md` — service-level setup and configuration
+- `services/meeting-transcribe/run.sh` — start command
+- `.mcp.json` (plugin root) — MCP server registration consumed by Claude Code
 - Downstream skill: `session-ingestion` (when Teams HTML exists or when a JSON-aware ingestor is wired)
 - Downstream skill: `thematic-coding` (when ingestion is skipped)

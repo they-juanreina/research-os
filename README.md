@@ -33,6 +33,19 @@ If you want to use Research OS for a new project (new team, new initiative), typ
 
 It will ask you a few questions (project name, team, research lead) and scaffold a complete ready-to-use Research OS folder for you.
 
+### Setting up the transcription service (optional)
+
+Some skills (`/meeting-transcription`) need a local FastAPI service that runs WhisperX + pyannote on your machine. First time:
+
+```bash
+cd services/meeting-transcribe
+./setup.sh
+# edit .env and set HF_TOKEN (after accepting terms on the pyannote page)
+./run.sh
+```
+
+The service exposes an MCP tool (`meeting-transcribe.transcribe_audio`) that Claude calls automatically — no extra config in Claude Code beyond having the plugin enabled. See `services/meeting-transcribe/README.md` for full setup details.
+
 ---
 
 ## How to use a skill

@@ -29,6 +29,21 @@ If RTF > 0.5 on the MLX backend, something is misconfigured. Check `/health`:
 
 ---
 
+## Two integration surfaces — pick the right one
+
+The transcription capability is exposed through:
+
+| Surface | Use when | Notes |
+|---|---|---|
+| MCP tool `meeting-transcribe.transcribe_audio` | This skill, and any agentic flow where Claude decides to transcribe | Default path. Wired via `.mcp.json` at plugin root. Synchronous call, returns full payload. |
+| HTTP `POST /transcribe` | Scripts, automations, non-Claude clients | Same payload. Multipart upload required. |
+| CLI `cli_test.sh` | Quick manual sanity check | Wraps the HTTP path. |
+| Web UI `http://127.0.0.1:8787/` | Human drag-and-drop | All controls visible, including align toggle. |
+
+All four hit the same `_process_audio()` helper inside the service — output is identical.
+
+---
+
 ## Backends: MLX (primary) and WhisperX (fallback)
 
 The service supports two ASR backends, selected with `TRANSCRIBE_BACKEND` (default `mlx`):

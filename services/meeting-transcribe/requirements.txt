@@ -1,0 +1,8 @@
+# Top-level dependencies. Pip resolves transitives (torch, pyannote-audio,
+# ctranslate2, mlx, etc). Pinned to versions tested 2026-04-27 on macOS arm64.
+whisperx==3.8.5
+mlx-whisper==0.4.3
+fastapi==0.136.1
+uvicorn[standard]==0.46.0
+python-multipart==0.0.26
+fastmcp==3.2.4

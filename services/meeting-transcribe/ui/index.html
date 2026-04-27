@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Meeting Transcribe</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1f232c;
+    --border: #2a2f3a;
+    --text: #e6e8ee;
+    --muted: #8b93a7;
+    --accent: #7aa2ff;
+    --accent-2: #a4c2ff;
+    --danger: #ff6b6b;
+    --ok: #5ddf7f;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 14px/1.5 -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin-bottom: 20px; font-size: 13px; }
+  .status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .dot.ok { background: var(--ok); }
+  .dot.bad { background: var(--danger); }
+  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  input[type="text"], select, textarea, input[type="number"] {
+    width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 10px; font-family: inherit; font-size: 13px;
+  }
+  textarea { resize: vertical; min-height: 70px; font-size: 12px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .field { margin-bottom: 14px; }
+  .drop {
+    border: 2px dashed var(--border); border-radius: 8px; padding: 28px 14px; text-align: center;
+    color: var(--muted); cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  }
+  .drop.has-file { border-color: var(--accent); color: var(--text); background: rgba(122,162,255,0.06); }
+  .drop.drag { border-color: var(--accent-2); background: rgba(122,162,255,0.1); }
+  .drop input { display: none; }
+  .drop strong { color: var(--text); }
+  button {
+    background: var(--accent); color: #0a1018; border: 0; border-radius: 6px; padding: 10px 14px;
+    font-weight: 600; font-size: 14px; cursor: pointer; width: 100%;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 10px; background: var(--panel-2); color: var(--text); font-size: 11px; }
+  .seg { display: grid; grid-template-columns: 70px 90px 1fr; gap: 12px; padding: 8px 0; border-top: 1px solid var(--border); align-items: baseline; }
+  .seg .ts { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+  .seg .sp { font-weight: 600; font-size: 12px; }
+  .seg .tx { white-space: pre-wrap; word-wrap: break-word; }
+  .history { margin-top: 16px; font-size: 12px; }
+  .history a { color: var(--accent-2); text-decoration: none; }
+  .history a:hover { text-decoration: underline; }
+  .history .row { display: flex; justify-content: space-between; padding: 4px 0; border-top: 1px solid var(--border); }
+  .history .row:first-child { border-top: 0; }
+  .placeholder { color: var(--muted); padding: 48px 12px; text-align: center; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(122,162,255,0.25); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .err { background: rgba(255,107,107,0.1); border: 1px solid var(--danger); color: var(--danger); padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+  .toolbar button { width: auto; padding: 6px 10px; font-size: 12px; }
+  .progress { color: var(--muted); font-size: 12px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Meeting Transcribe + Diarize</h1>
+  <div class="sub"><span class="status"><span id="dot" class="dot"></span><span id="statusText">Checking service…</span></span></div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="field">
+        <label>Audio</label>
+        <label class="drop" id="drop">
+          <input id="file" type="file" accept="audio/*,video/*,.mp3,.wav,.m4a,.mp4,.flac,.ogg,.webm,.mkv" />
+          <div id="dropMsg"><strong>Arrastra un archivo</strong> o haz clic</div>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Idioma</label>
+        <select id="language">
+          <option value="">Auto-detect</option>
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Hotwords / diccionario (opcional)</label>
+        <textarea id="hotwords" placeholder="Deja vacío para usar el default del servicio"></textarea>
+      </div>
+
+      <div class="field row">
+        <div>
+          <label>Exact #</label>
+          <input id="num_speakers" type="number" min="1" placeholder="—" />
+        </div>
+        <div>
+          <label>Min</label>
+          <input id="min_speakers" type="number" min="1" placeholder="—" />
+        </div>
+        <div>
+          <label>Max</label>
+          <input id="max_speakers" type="number" min="1" placeholder="—" />
+        </div>
+      </div>
+
+      <div class="field" style="display: flex; align-items: center; gap: 8px;">
+        <input id="align" type="checkbox" style="width: auto;" />
+        <label for="align" style="margin: 0; text-transform: none; letter-spacing: 0;">Word-level alignment (más lento, sólo si necesitas timestamps por palabra)</label>
+      </div>
+
+      <button id="go">Transcribir</button>
+      <div id="progress" class="progress"></div>
+      <div id="err"></div>
+
+      <div class="history">
+        <label style="margin-top: 18px;">Historial</label>
+        <div id="historyList"><div class="placeholder" style="padding: 12px 0;">—</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div id="result">
+        <div class="placeholder">Carga un audio y pulsa <strong>Transcribir</strong>.<br/>El resultado aparecerá aquí y se guardará en <code>outputs/</code>.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const dropEl = $('drop');
+const fileEl = $('file');
+const dropMsg = $('dropMsg');
+const goBtn = $('go');
+const errEl = $('err');
+const progressEl = $('progress');
+const resultEl = $('result');
+const historyEl = $('historyList');
+
+let selectedFile = null;
+
+function fmtTs(seconds) {
+  const s = Math.floor(seconds);
+  const hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
+  return hh > 0
+    ? `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`
+    : `${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+}
+function colorFor(speaker) {
+  // deterministic color per speaker id
+  let h = 0;
+  for (const c of speaker || '') h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const hue = h % 360;
+  return `hsl(${hue}, 70%, 72%)`;
+}
+
+async function checkHealth() {
+  try {
+    const r = await fetch('/health');
+    if (!r.ok) throw new Error(r.statusText);
+    const j = await r.json();
+    $('dot').className = 'dot ok';
+    const modelLabel = (j.whisper_model || '').replace(/^mlx-community\//, '');
+    $('statusText').textContent = `${j.backend || 'whisperx'} · ${modelLabel} · ${j.device}/${j.compute_type} · diarize=${j.diarize_device || 'cpu'}`;
+  } catch (e) {
+    $('dot').className = 'dot bad';
+    $('statusText').textContent = 'service offline';
+  }
+}
+
+function setFile(f) {
+  selectedFile = f;
+  if (f) {
+    dropEl.classList.add('has-file');
+    dropMsg.innerHTML = `<strong>${f.name}</strong><br><span style="color: var(--muted); font-size: 12px;">${(f.size / 1024 / 1024).toFixed(1)} MB</span>`;
+  } else {
+    dropEl.classList.remove('has-file');
+    dropMsg.innerHTML = '<strong>Arrastra un archivo</strong> o haz clic';
+  }
+}
+
+fileEl.addEventListener('change', e => setFile(e.target.files[0] || null));
+dropEl.addEventListener('dragover', e => { e.preventDefault(); dropEl.classList.add('drag'); });
+dropEl.addEventListener('dragleave', e => { dropEl.classList.remove('drag'); });
+dropEl.addEventListener('drop', e => {
+  e.preventDefault(); dropEl.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f) { fileEl.files = e.dataTransfer.files; setFile(f); }
+});
+
+function renderResult(data) {
+  const speakers = data.speakers || [];
+  const toolbar = `
+    <div class="toolbar">
+      <button class="ghost" id="copyBtn">Copy transcript</button>
+      <button class="ghost" id="downloadBtn">Download JSON</button>
+      ${data.saved_to ? `<span style="color: var(--muted); font-size: 12px; align-self: center;">saved: ${data.saved_to.split('/').pop()}</span>` : ''}
+    </div>`;
+  const meta = `<div class="meta">
+    <span>lang: <span class="chip">${data.language || '?'}</span></span>
+    <span>speakers: ${speakers.map(s => `<span class="chip" style="color:${colorFor(s)}">${s}</span>`).join(' ')}</span>
+    <span>segments: ${data.segments?.length ?? 0}</span>
+  </div>`;
+  const segs = (data.segments || []).map(s => `
+    <div class="seg">
+      <div class="ts">${fmtTs(s.start)}–${fmtTs(s.end)}</div>
+      <div class="sp" style="color:${colorFor(s.speaker)}">${s.speaker || 'UNKNOWN'}</div>
+      <div class="tx">${escapeHtml(s.text)}</div>
+    </div>`).join('');
+  resultEl.innerHTML = toolbar + meta + segs;
+  $('copyBtn').onclick = () => {
+    const plain = (data.segments || []).map(s => `[${fmtTs(s.start)}] ${s.speaker}: ${s.text}`).join('\n');
+    navigator.clipboard.writeText(plain);
+    $('copyBtn').textContent = 'Copied ✓';
+    setTimeout(() => $('copyBtn').textContent = 'Copy transcript', 1500);
+  };
+  $('downloadBtn').onclick = () => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (data.saved_to?.split('/').pop()) || 'transcript.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function loadHistory() {
+  try {
+    const r = await fetch('/outputs');
+    const rows = await r.json();
+    if (!rows.length) { historyEl.innerHTML = '<div class="placeholder" style="padding: 12px 0;">Sin transcripciones</div>'; return; }
+    historyEl.innerHTML = rows.slice(0, 20).map(f => `
+      <div class="row">
+        <a href="#" data-name="${escapeHtml(f.name)}" class="loadLink">${escapeHtml(f.name)}</a>
+        <span style="color: var(--muted);">${(f.size / 1024).toFixed(0)} KB</span>
+      </div>`).join('');
+    historyEl.querySelectorAll('.loadLink').forEach(a => a.addEventListener('click', async e => {
+      e.preventDefault();
+      const r = await fetch('/outputs/' + encodeURIComponent(a.dataset.name));
+      const data = await r.json();
+      renderResult(data);
+    }));
+  } catch (e) {
+    historyEl.innerHTML = '<div class="placeholder" style="padding: 12px 0;">error cargando historial</div>';
+  }
+}
+
+goBtn.addEventListener('click', async () => {
+  errEl.innerHTML = '';
+  if (!selectedFile) { errEl.innerHTML = '<div class="err">Selecciona un audio primero.</div>'; return; }
+  goBtn.disabled = true;
+  progressEl.innerHTML = '<span class="spinner"></span>Transcribiendo…';
+  const t0 = Date.now();
+
+  const fd = new FormData();
+  fd.append('audio', selectedFile);
+  const lang = $('language').value; if (lang) fd.append('language', lang);
+  const hw = $('hotwords').value.trim(); if (hw) fd.append('hotwords', hw);
+  for (const k of ['num_speakers', 'min_speakers', 'max_speakers']) {
+    const v = $(k).value; if (v) fd.append(k, v);
+  }
+  if ($('align').checked) fd.append('align', 'true');
+
+  try {
+    const r = await fetch('/transcribe', { method: 'POST', body: fd });
+    if (!r.ok) {
+      const t = await r.text();
+      throw new Error(`HTTP ${r.status}: ${t.slice(0, 500)}`);
+    }
+    const data = await r.json();
+    renderResult(data);
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+    const rtf = data.realtime_factor != null ? ` · ${data.realtime_factor}× audio (${data.audio_seconds}s)` : '';
+    progressEl.innerHTML = `✓ Listo en ${elapsed}s${rtf}`;
+    loadHistory();
+  } catch (e) {
+    errEl.innerHTML = `<div class="err">${escapeHtml(String(e.message || e))}</div>`;
+    progressEl.innerHTML = '';
+  } finally {
+    goBtn.disabled = false;
+  }
+});
+
+checkHealth();
+loadHistory();
+</script>
+</body>
+</html>
