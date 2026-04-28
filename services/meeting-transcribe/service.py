@@ -22,6 +22,7 @@ logging.getLogger("torchcodec").setLevel(logging.CRITICAL)
 import torch
 import whisperx
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from pydantic import BaseModel
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from whisperx.diarize import DiarizationPipeline
@@ -434,6 +435,48 @@ async def transcribe(
             pass
 
 
+def _relabel_transcript(data: dict[str, Any], mapping: dict[str, str]) -> dict[str, Any]:
+    """Apply a speaker mapping to a transcript dict in-place and return it.
+
+    Touches every place a speaker label appears: top-level `speakers` list,
+    `segments[].speaker`, and `segments[].words[].speaker`.
+    Unknown labels (not in mapping) are left unchanged.
+    """
+    data["speakers"] = [mapping.get(s, s) for s in data.get("speakers", [])]
+    for seg in data.get("segments", []):
+        if seg.get("speaker"):
+            seg["speaker"] = mapping.get(seg["speaker"], seg["speaker"])
+        for word in seg.get("words", []):
+            if word.get("speaker"):
+                word["speaker"] = mapping.get(word["speaker"], word["speaker"])
+    return data
+
+
+class RelabelRequest(BaseModel):
+    transcript_path: str
+    mapping: dict[str, str]  # e.g. {"SPEAKER_00": "Moderator", "SPEAKER_01": "Ana"}
+    output_path: str | None = None  # None = overwrite in place
+
+
+@app.post("/relabel")
+async def relabel(req: RelabelRequest):
+    """Remap generic SPEAKER_XX labels to real names throughout a transcript JSON.
+
+    Reads the transcript at `transcript_path`, applies `mapping`, and writes
+    the result to `output_path` (or overwrites in place if omitted).
+    Returns the updated transcript.
+    """
+    src = Path(req.transcript_path).expanduser()
+    if not src.is_file():
+        raise HTTPException(status_code=404, detail=f"transcript not found: {req.transcript_path}")
+    data = json.loads(src.read_text(encoding="utf-8"))
+    _relabel_transcript(data, req.mapping)
+    dest = Path(req.output_path).expanduser() if req.output_path else src
+    dest.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    log.info("Relabeled %s → %s (mapping: %s)", src.name, dest.name, req.mapping)
+    return JSONResponse({"saved_to": str(dest), **data})
+
+
 # -----------------------------------------------------------------------------
 # MCP layer — exposes the same processing pipeline as a typed tool over
 # streamable-http. Mounted on /mcp so the FastAPI service stays a single process.
@@ -445,7 +488,8 @@ mcp = FastMCP(
     instructions=(
         "Local transcription + diarization service. Use transcribe_audio when you "
         "have an audio/video file path on this machine and need a speaker-labeled "
-        "transcript. The service runs on Apple Silicon GPU via MLX Whisper + pyannote."
+        "transcript. Use relabel_speakers to remap SPEAKER_XX labels to real names "
+        "after transcription. The service runs on Apple Silicon GPU via MLX Whisper + pyannote."
     ),
 )
 
@@ -491,6 +535,39 @@ def transcribe_audio(
         align=align,
         source_filename=path.name,
     )
+
+
+@mcp.tool()
+def relabel_speakers(
+    transcript_path: str,
+    mapping: dict[str, str],
+    output_path: str | None = None,
+) -> dict[str, Any]:
+    """Remap generic SPEAKER_XX labels to real names throughout a transcript JSON.
+
+    Call this after transcribe_audio once you know who was speaking.
+    The mapping is applied to every place a speaker label appears: the top-level
+    `speakers` list, `segments[].speaker`, and `segments[].words[].speaker`.
+    Unknown labels (not in mapping) are left unchanged.
+
+    Args:
+        transcript_path: Absolute path to a transcript JSON produced by transcribe_audio.
+        mapping: Dict of SPEAKER_XX → real name. E.g. {"SPEAKER_00": "Moderator", "SPEAKER_01": "Ana"}.
+            You only need to map the speakers you know — unmapped labels stay as-is.
+        output_path: Where to write the relabeled JSON. Omit to overwrite transcript_path in place.
+
+    Returns:
+        The updated transcript dict with real names everywhere, plus `saved_to` field.
+    """
+    src = Path(transcript_path).expanduser()
+    if not src.is_file():
+        raise FileNotFoundError(f"transcript not found: {transcript_path}")
+    data = json.loads(src.read_text(encoding="utf-8"))
+    _relabel_transcript(data, mapping)
+    dest = Path(output_path).expanduser() if output_path else src
+    dest.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    log.info("Relabeled %s → %s (mapping: %s)", src.name, dest.name, mapping)
+    return {"saved_to": str(dest), **data}
 
 
 @mcp.tool()
