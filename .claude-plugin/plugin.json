@@ -1,12 +1,12 @@
 {
   "name": "research-os",
   "description": "Research OS Skills Library — human-led, AI-assisted research methodology with plural epistemology. Includes 12 skills across Plan, Collect, Synthesize, Evaluate, Query, Plant, and Report phases.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Juan Reina"
   },
-  "homepage": "https://github.com/YOUR_GITHUB_ORG/research-os",
-  "repository": "https://github.com/YOUR_GITHUB_ORG/research-os",
+  "homepage": "https://github.com/they-juanreina/research-os",
+  "repository": "https://github.com/they-juanreina/research-os",
   "license": "MIT",
   "keywords": ["research", "ux", "user-research", "qualitative", "synthesis", "skills"]
 }
