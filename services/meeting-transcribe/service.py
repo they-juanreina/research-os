@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+import sys
 import tempfile
 import time
 from contextlib import asynccontextmanager
@@ -12,6 +13,11 @@ from pathlib import Path
 from typing import Any
 
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+
+# torchcodec's dlopen of libavutil fails on macOS with Homebrew FFmpeg >= 8.
+# Audio decode uses ffmpeg-via-PATH; this is benign. Silence the multi-line traceback.
+logging.getLogger("torchcodec._core").setLevel(logging.CRITICAL)
+logging.getLogger("torchcodec").setLevel(logging.CRITICAL)
 
 import torch
 import whisperx
@@ -57,15 +63,23 @@ DEFAULT_ALIGN = os.environ.get("TRANSCRIBE_ALIGN", "false").lower() in {"1", "tr
 HF_TOKEN = os.environ.get("HF_TOKEN")
 
 DEFAULT_HOTWORDS = (
-    "Valtech, Deere, John Deere, Claude, Anthropic, Langflow, Figma, MCP, "
-    "Kubernetes, Docker, CI/CD, SRE, DevOps, GraphQL, REST, TypeScript, "
-    "Python, React, Next.js, PostgreSQL, Redis, Kafka, S3, AWS, GCP, Azure, "
-    "MLX, PyTorch, Whisper, pyannote, diarización, transcripción, embeddings, "
-    "RAG, LLM, prompt, fine-tuning, vector database, Pinecone, Weaviate, "
-    "roadmap, sprint, backlog, stakeholder, KPI, OKR, MVP, POC."
+    "Claude, Anthropic, Figma, MCP, Langflow, "
+    "Kubernetes, Docker, CI/CD, DevOps, GraphQL, REST, TypeScript, "
+    "Python, React, Next.js, PostgreSQL, Redis, Kafka, AWS, GCP, Azure, "
+    "MLX, PyTorch, Whisper, pyannote, embeddings, "
+    "RAG, LLM, prompt, fine-tuning, vector database, "
+    "roadmap, sprint, backlog, stakeholder, KPI, OKR, MVP, POC, "
+    "usability, affordance, mental model, pain point, user journey, "
+    "persona, prototype, wireframe, information architecture, "
+    "interview, observation, synthesis, insight, finding."
 )
 
 _models: dict[str, Any] = {}
+
+
+def _progress(msg: str) -> None:
+    """Print a boot-progress line to stderr immediately (bypasses uvicorn log buffering)."""
+    print(f"[meeting-transcribe] {msg}", file=sys.stderr, flush=True)
 
 
 def _load_models() -> None:
@@ -73,27 +87,30 @@ def _load_models() -> None:
         import mlx_whisper
         from mlx_whisper import load_models
 
-        log.info("Loading MLX Whisper model=%s", MLX_MODEL)
+        _progress(f"loading MLX Whisper ({MLX_MODEL})…")
         _models["mlx_whisper_module"] = mlx_whisper
         _models["mlx_model"] = load_models.load_model(MLX_MODEL)
         _models["mlx_repo"] = MLX_MODEL
+        log.info("MLX Whisper loaded model=%s", MLX_MODEL)
     elif BACKEND == "whisperx":
-        log.info("Loading WhisperX model=%s device=%s compute=%s", WHISPER_MODEL, DEVICE, COMPUTE_TYPE)
+        _progress(f"loading WhisperX ({WHISPER_MODEL}, device={DEVICE}, compute={COMPUTE_TYPE})…")
         _models["whisper"] = whisperx.load_model(
             WHISPER_MODEL,
             DEVICE,
             compute_type=COMPUTE_TYPE,
             asr_options={"initial_prompt": DEFAULT_HOTWORDS, "hotwords": DEFAULT_HOTWORDS},
         )
+        log.info("WhisperX loaded model=%s device=%s compute=%s", WHISPER_MODEL, DEVICE, COMPUTE_TYPE)
     else:
         raise RuntimeError(f"Unknown TRANSCRIBE_BACKEND: {BACKEND!r} (expected 'mlx' or 'whisperx')")
 
-    log.info("Loading diarization model=%s device=%s", DIARIZATION_MODEL, DIARIZE_DEVICE)
+    _progress(f"loading diarization model ({DIARIZATION_MODEL}, device={DIARIZE_DEVICE})…")
     if not HF_TOKEN:
         log.warning("HF_TOKEN not set — diarization model load will fail until terms accepted + token provided")
     _models["diarize"] = DiarizationPipeline(model_name=DIARIZATION_MODEL, token=HF_TOKEN, device=DIARIZE_DEVICE)
 
     _models["align_cache"] = {}
+    _progress("Ready (backend=%s)" % BACKEND)
 
 
 # Forward-declared so lifespan can reference the FastMCP http_app's lifespan
@@ -130,15 +147,36 @@ def _resolve_hotwords(prompt: str | None) -> str | None:
     return resolved or None
 
 
+def _is_intra_segment_hallucination(text: str, duration: float) -> bool:
+    """Return True if a single token dominates the segment — Whisper repetition loop.
+
+    large-v3-turbo sometimes enters a repetition loop inside a single long segment
+    (e.g. 221× the same Cyrillic token on English audio). Cross-segment dedup doesn't
+    catch these. Rule: one token > 50% of all word tokens AND segment > 5 s.
+    """
+    if duration <= 5.0:
+        return False
+    words = text.split()
+    if len(words) < 10:
+        return False
+    counts: dict[str, int] = {}
+    for w in words:
+        key = w.lower().strip(".,!?\"'")
+        counts[key] = counts.get(key, 0) + 1
+    return max(counts.values()) / len(words) > 0.50
+
+
 def _clean_asr_segments(segments: list[dict[str, Any]], audio_seconds: float) -> list[dict[str, Any]]:
-    """Drop tail hallucinations and zero/negative-duration empty segments.
+    """Drop tail hallucinations, intra-segment repetition loops, and empty segments.
 
     Whisper-family models emit phantom segments past the real end of audio
-    (especially MLX with condition_on_previous_text) and zero-duration empties
-    on silences. Both produce UNKNOWN-speaker rows downstream and pollute output.
+    (especially MLX with condition_on_previous_text), zero-duration empties on
+    silences, and intra-segment repetition loops (one token > 50% of the segment).
+    All three produce corrupt or useless rows downstream.
     """
     tail_tolerance = 1.0  # seconds — keep last legit content even if slightly past audio end
     cleaned: list[dict[str, Any]] = []
+    intra_dropped = 0
     for seg in segments:
         start = float(seg.get("start", 0.0))
         end = float(seg.get("end", start))
@@ -147,7 +185,12 @@ def _clean_asr_segments(segments: list[dict[str, Any]], audio_seconds: float) ->
             continue
         if end <= start and not text:
             continue
+        if _is_intra_segment_hallucination(text, end - start):
+            intra_dropped += 1
+            continue
         cleaned.append(seg)
+    if intra_dropped:
+        log.warning("Dropped %d intra-segment repetition hallucination(s)", intra_dropped)
     return cleaned
 
 

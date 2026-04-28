@@ -25,6 +25,13 @@ if [ -z "$PYTHON" ]; then
   exit 1
 fi
 
+if ! command -v ffmpeg >/dev/null 2>&1; then
+  echo "error: ffmpeg not found on PATH — required for audio decode." >&2
+  echo "  brew install ffmpeg" >&2
+  exit 1
+fi
+echo "==> ffmpeg $(ffmpeg -version 2>&1 | head -1 | awk '{print $3}')"
+
 echo "==> Using $($PYTHON --version) at $(command -v "$PYTHON")"
 if [ -d .venv ]; then
   existing=$(.venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null || echo "?")
@@ -49,17 +56,31 @@ echo "==> Installing requirements (this can take 5-10 min on first run)"
 
 if [ ! -f .env ]; then
   cat > .env <<'EOF'
-# Diarization needs a Hugging Face token with terms accepted for
-# pyannote/speaker-diarization-community-1. Get one at https://hf.co/settings/tokens
+# Diarization needs a Hugging Face token with model terms accepted.
+# See setup steps below — paste your token after HF_TOKEN=
 HF_TOKEN=
 EOF
-  echo "==> Created .env stub. Edit it and set HF_TOKEN before running ./run.sh"
+  chmod 600 .env
+  echo "==> Created .env stub (permissions: 600)"
 else
-  echo "==> .env already exists; leaving as-is"
+  chmod 600 .env
+  echo "==> .env already exists; permissions set to 600"
 fi
 
 echo
-echo "Done. Next steps:"
-echo "  1. (if not already) edit .env and set HF_TOKEN"
-echo "  2. accept terms at https://hf.co/pyannote/speaker-diarization-community-1"
-echo "  3. ./run.sh"
+echo "========================================================"
+echo " Setup complete. Before running ./run.sh:"
+echo "========================================================"
+echo
+echo " Step 1 — Accept the diarization model terms (one-time):"
+echo "   https://hf.co/pyannote/speaker-diarization-community-1"
+echo
+echo " Step 2 — Create a Hugging Face token (read access is enough):"
+echo "   https://hf.co/settings/tokens"
+echo
+echo " Step 3 — Paste the token into .env:"
+echo "   echo 'HF_TOKEN=hf_your_token_here' >> $(pwd)/.env"
+echo
+echo " Step 4 — Start the service:"
+echo "   ./run.sh"
+echo "========================================================"
