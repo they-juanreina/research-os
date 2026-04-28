@@ -101,6 +101,18 @@ Required fields: `language`, `speakers`, `segments[]`, `source_filename`, `creat
 
 ## Invocation
 
+**First-time setup** (once per machine — skip if the service has run before):
+
+```bash
+cd <plugin-root>/services/meeting-transcribe && ./setup.sh
+```
+
+`setup.sh` creates the `.venv` (Python env with MLX Whisper, pyannote, ffmpeg bindings) and a `.env` stub. After it finishes:
+
+1. Accept model terms at <https://hf.co/pyannote/speaker-diarization-community-1>
+2. Generate a token at <https://hf.co/settings/tokens> (read access)
+3. Paste it into `.env`: `HF_TOKEN=hf_...`
+
 **Start the service** (one-time per session):
 
 ```bash
